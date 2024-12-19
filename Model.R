@@ -1,4 +1,9 @@
 
+library(dplyr)
+library(stringr)
+library(tidytext)
+library(tokenizers)
+
 list_report <- readRDS("list_report.RDS")
 list_stats <- readRDS("list_stats.RDS")
 
@@ -31,6 +36,13 @@ for(i in 1:length(list_stats)) {
   
   
 }
+
+
+
+saveRDS(list_stats, "combined_stats_report_list.RDS")
+
+
+
 
 
 
