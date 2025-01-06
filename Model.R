@@ -6,13 +6,19 @@ library(tokenizers)
 library(sentimentr)
 library(stringi)
 
-
+# From file premierleague.R
+# Webscraped "https://www.premierleague.com/results" to get all the match reports
 list_report <- readRDS("list_report.RDS")
+
+# From file fotmob.R
+# Used Fotmobs API to get player performance of the same matches as in the match reports
 list_stats <- readRDS("list_stats.RDS")
+
+
 
 # The two datsets uses different names on football teams
 # thats why we have a translator
-team_translator <- readRDS("team_translator.RDS") %>%  as.data.frame()
+team_translator <- readRDS("team_translator.RDS") %>% as.data.frame()
 
 translate <- function(team) {
   team_translator[team_translator$PL == team, "fotmob"]
@@ -36,11 +42,7 @@ for(i in 1:length(list_stats)) {
   index_report <- which(all_hteam_ateam_report == str_c(hteam_stats, ateam_stats))
   
   list_stats[[i]]$report <- list_report[[index_report]]$report
-  
-  
 }
-
-
 
 
 
@@ -223,5 +225,52 @@ ggplot(cleaned_data, aes(x = sentiment_class, y = FotMob.rating, fill = sentimen
   theme_minimal()
 
 
+# Load necessary library
+library(dplyr)
+
+# Compute statistics for FotMob.rating and sentiment_value per sentiment class
+summary_stats_by_sentiment <- cleaned_data %>%
+  group_by(sentiment_class) %>%
+  summarise(
+    num_obs = n(),
+    FotMob_rating_median = median(FotMob.rating, na.rm = TRUE),
+    FotMob_rating_quantiles = list(quantile(FotMob.rating, probs = c(0.25, 0.5, 0.75), na.rm = TRUE)),
+  )
+
+# View the results
+summary_stats_by_sentiment
+
+
+
+
 table(cleaned_data$sentiment_class)
 
+
+
+
+# Data section, ggplot histogram
+
+
+players_rating <- as.numeric(unlist(sapply(list_stats, function(x){
+  c(x$home_players$FotMob.rating, x$away_players$FotMob.rating)
+} )))
+
+
+players_rating <- players_rating[!players_rating == 0]V
+
+library(ggplot2)
+
+# Assuming players_rating is a numeric vector
+ggplot(data = data.frame(players_rating), aes(x = players_rating)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "Histogram of Player Ratings", x = "Rating", y = "Frequency") +
+  theme_minimal() +
+  theme(
+    text = element_text(size = 13),      # Increase text size
+    axis.title = element_text(size = 15), # Increase axis title size
+    axis.text = element_text(size = 12),  # Increase axis number size
+    plot.title = element_text(size = 17)  # Increase plot title size
+  )
+
+
+ggsave("player_ratings_histogram.png", width = 5, height = 3.5, dpi = 300)

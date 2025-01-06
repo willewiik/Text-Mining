@@ -12,7 +12,8 @@ url <- "https://www.premierleague.com/results"
 
 
 
-remote_driver <- rsDriver(browser = "firefox",chromever = NULL,verbose = F,port = free_port())
+remote_driver <- rsDriver(browser = "firefox",chromever = NULL,
+                          verbose = F, port = free_port())
 remDrv <- remote_driver$client
 remDrv$maxWindowSize()
 
@@ -24,14 +25,14 @@ html_parsed <- read_html(html_content)
 matchurls <- html_parsed %>%  html_nodes('[data-href]') %>%  html_attr('data-href')
   
 
-remote_driver$server$stop()
+#remote_driver$server$stop()
 
 list_report <- list()
 
 for(i in 1:length(matchurls)) {
+  
   print(i)
   html_content <- read_html(str_c("https:",matchurls[i]))
-  #Sys.sleep(2)
   match_report <- html_content %>% html_nodes('.article__body p') %>% html_text() 
   full_report <- paste(match_report, collapse = " ")
   

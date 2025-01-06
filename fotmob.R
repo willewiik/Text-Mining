@@ -164,12 +164,13 @@ fotmob_match <- function(match_id, xfmreq) {
 matches <- fotmob_league(league_id = 47, xfmreq = xfmreq)
 
 
-hej <- fotmob_match(match_id = matches$match_ids[1], xfmreq = xfmreq)
+
 
 list_stats <- list()
 
 
 for(i in 1:nrow(matches)) {
+  
   print(i)
   temp_match <- fotmob_match(match_id = matches$match_ids[i], xfmreq = xfmreq)
   list_stats <- append(list_stats, list(temp_match))
