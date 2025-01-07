@@ -25,7 +25,6 @@ html_parsed <- read_html(html_content)
 matchurls <- html_parsed %>%  html_nodes('[data-href]') %>%  html_attr('data-href')
   
 
-#remote_driver$server$stop()
 
 list_report <- list()
 
@@ -50,7 +49,7 @@ for(i in 1:length(matchurls)) {
 saveRDS(list_report, "list_report.RDS")
 
 
-
+remote_driver$server$stop()
 
 
 
