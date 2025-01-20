@@ -7,11 +7,11 @@ library(sentimentr)
 library(stringi)
 library(ggplot2)
 
-# From file premierleague.R
+# From file gather_data.R
 # Webscraped "https://www.premierleague.com/results" to get all the match reports
 list_report <- readRDS("RDS_files/list_report.RDS")
 
-# From file fotmob.R
+# From file gather_data.R
 # Used Fotmobs API to get player performance of the same matches as in the match reports
 list_stats <- readRDS("RDS_files/list_stats.RDS")
 
@@ -51,7 +51,7 @@ saveRDS(list_stats, "RDS_files/combined_stats_report_list.RDS")
 
 
 
-# Data section, ggplot histogram
+# ggplot histogram
 players_rating <- as.numeric(unlist(sapply(list_stats, function(x){
   c(x$home_players$FotMob.rating, x$away_players$FotMob.rating)
 } )))
@@ -61,16 +61,15 @@ players_rating <- players_rating[!players_rating == 0]
 
 
 
-# Assuming players_rating is a numeric vector
 ggplot(data = data.frame(players_rating), aes(x = players_rating)) +
   geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
   labs(title = "Histogram of FotMob Ratings", x = "FotMob Rating", y = "Frequency") +
   theme_minimal() +
   theme(
-    text = element_text(size = 13),      # Increase text size
-    axis.title = element_text(size = 15), # Increase axis title size
-    axis.text = element_text(size = 12),  # Increase axis number size
-    plot.title = element_text(size = 17)  # Increase plot title size
+    text = element_text(size = 13),      
+    axis.title = element_text(size = 15), 
+    axis.text = element_text(size = 12), 
+    plot.title = element_text(size = 17)  
   )
 
 
